@@ -1,0 +1,16 @@
+@startuml asdf
+skinparam actorStyle awesome
+
+"Creator"
+"Player"
+
+node "Hahoot" as hahoot {
+    [Gameplay]
+    [Presentation]
+}
+
+"Creator" --> [Presentation] : "Prepare Quiz"
+"Player" --> [Gameplay] : "Play Quiz"
+
+
+@enduml

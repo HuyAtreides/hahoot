@@ -1,0 +1,49 @@
+classDiagram
+    class Screen {<<Interface>>}
+    class Theme {<<Interface>>}
+    class HahootPresentation {
+      -screens: List<Screen>
+      -theme: Theme
+      -status: Status
+      +addSlide(): void
+      +removeSlide(): void
+      +editSlide(): void
+      +editQuestion(): void 
+      +addQuestion(): void
+      +removeQuestion(): void
+    }
+    class Participant {
+      -name: String
+      -score: int
+      +answer(): void
+      +getScore(): int
+    }
+
+    class HahootGame {
+      -quizzes: List<Quiz>
+      -participants: List<Participant>
+      +answer(): void
+      +nextQuestion(): void
+      +getRanking(): List<Participant>
+    } 
+
+    class Quiz {
+      <<Abstract>>
+      -timeLimit: int
+      -points: int
+
+      +update(): void
+      +getType(): QuizType*
+    }
+
+    class Slide {
+      <<Abstract>>
+      +update(): void
+      +getType(): SlideType*
+    }
+
+    HahootPresentation --> "1..*" Screen : contains
+    HahootPresentation --> "1" Theme : uses
+    Screen <|-- Slide : implements
+    Screen <|-- Quiz : implements
+    
