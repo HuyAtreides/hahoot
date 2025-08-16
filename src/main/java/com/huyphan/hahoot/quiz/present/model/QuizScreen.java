@@ -1,7 +1,7 @@
 package com.huyphan.hahoot.quiz.present.model;
 
+import com.huyphan.hahoot.quiz.gameplay.model.Answer;
 import com.huyphan.hahoot.quiz.gameplay.model.QuestionType;
-import com.huyphan.hahoot.quiz.present.model.OptionSelectQuiz.Answer;
 
 public interface QuizScreen extends Screen {
     void updateTimeLimit(int timeLimit);

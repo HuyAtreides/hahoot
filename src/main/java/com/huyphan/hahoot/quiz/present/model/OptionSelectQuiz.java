@@ -3,23 +3,19 @@ package com.huyphan.hahoot.quiz.present.model;
 import java.util.List;
 import java.util.Optional;
 
+import com.huyphan.hahoot.quiz.gameplay.model.Answer;
 import com.huyphan.hahoot.quiz.gameplay.model.QuestionType;
 import com.huyphan.hahoot.quiz.gameplay.model.Quiz;
 
-import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class OptionSelectQuiz extends Quiz implements QuizScreen {
 
-    @Builder
-    public static class Answer {
-        private Optional<String> text;
-        private boolean correct;
-        private Optional<Media> media;
-    }
-
     public OptionSelectQuiz(String questionTitle, List<Answer> answers, List<Answer> correctAnswers, int timeLimit,
-            int points, Optional<Media> media) {
-        super(questionTitle, answers, correctAnswers, timeLimit, points);
+            int points, Optional<Media> media, int timeLeft) {
+        super(questionTitle, answers, correctAnswers, timeLimit, points, timeLeft);
         this.media = media;
     }
 
@@ -28,19 +24,18 @@ public class OptionSelectQuiz extends Quiz implements QuizScreen {
     @Override
     public void addAnswer(Answer answer) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void getPoints(Answer answer) {
+    public int getPoints(Answer answer) {
         // TODO Auto-generated method stub
-
+        return 0;
     }
 
     @Override
-    public void isCorrectAnswer(Answer answer) {
+    public boolean isCorrectAnswer(Answer answer) {
         // TODO Auto-generated method stub
-
+        return false;
     }
 
     @Override
@@ -80,6 +75,19 @@ public class OptionSelectQuiz extends Quiz implements QuizScreen {
     }
 
     @Override
+    public Quiz oneSecondElapsed() {
+        return OptionSelectQuiz.builder()
+                .questionTitle(this.questionTitle)
+                .answers(this.answers)
+                .correctAnswers(this.correctAnswers)
+                .timeLimit(getTimeLimit())
+                .points(this.points)
+                .timeLeft(this.timeLeft - 1)
+                .media(media)
+                .build();
+    }
+
+    @Override
     public Media getMedia() {
         return media.orElseThrow();
     }
@@ -89,5 +97,4 @@ public class OptionSelectQuiz extends Quiz implements QuizScreen {
 
         return QuestionType.QUIZ;
     }
-
 }
