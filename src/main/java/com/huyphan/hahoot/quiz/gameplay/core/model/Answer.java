@@ -1,4 +1,4 @@
-package com.huyphan.hahoot.quiz.gameplay.model;
+package com.huyphan.hahoot.quiz.gameplay.core.model;
 
 import jakarta.annotation.Nonnull;
 

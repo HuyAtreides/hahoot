@@ -1,9 +1,13 @@
-package com.huyphan.hahoot.quiz.gameplay.model;
+package com.huyphan.hahoot.quiz.gameplay.core.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,8 +16,13 @@ import lombok.Getter;
 @Builder
 public class HahootGame {
     @Getter
+    @NotNull
     private final UUID id;
+
+    @NotEmpty
     private final List<Participant> participants;
+
+    @NotEmpty
     private final List<Quiz> quizzes;
     private final GameStatus status;
     private final List<ParticipantQuizAnswer> currentQuizAnswers;
@@ -24,14 +33,14 @@ public class HahootGame {
 
     private final int currentQuizNumber = 0;
 
-    public static HahootGame create(List<Participant> participants, List<Quiz> quizzes, UUID gameId) {
-        assert participants != null && !participants.isEmpty() : "Participants cannot be null or empty";
-        assert quizzes != null && !quizzes.isEmpty() : "Quizzes cannot be null or empty";
+    public static HahootGame start(
+            List<Participant> participants,
+            List<Quiz> quizzes) {
 
         return HahootGame.builder()
-                .id(gameId)
+                .id(UUID.randomUUID())
                 .participants(participants)
-                .quizzes(quizzes)
+                .quizzes(new CopyOnWriteArrayList<Quiz>(quizzes))
                 .status(GameStatus.CREATED)
                 .currentQuizAnswers(Collections.emptyList())
                 .build();
@@ -52,6 +61,10 @@ public class HahootGame {
         }
     }
 
+    public boolean isCurrentQuizTimeUp() {
+        return getCurrentQuiz().isTimeUp();
+    }
+
     public void minus1SecondForCurrentQuiz() {
         Quiz currentQuiz = getCurrentQuiz();
 
@@ -63,4 +76,11 @@ public class HahootGame {
         quizzes.set(currentQuizNumber, quizAfterTimeElapsed);
     }
 
+    public void addParticipant(Participant participant) {
+        if (status == GameStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Cannot add participants while the game is in progress");
+        }
+
+        participants.add(participant);
+    }
 }

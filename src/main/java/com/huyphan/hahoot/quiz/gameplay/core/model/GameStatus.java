@@ -1,9 +1,10 @@
-package com.huyphan.hahoot.quiz.gameplay.model;
+package com.huyphan.hahoot.quiz.gameplay.core.model;
 
 public enum GameStatus {
     CREATED,
     STARTED,
     IN_PROGRESS,
+    WAITING_FOR_PARTICIPANTS,
     ENDED;
 
     public boolean isStarted() {

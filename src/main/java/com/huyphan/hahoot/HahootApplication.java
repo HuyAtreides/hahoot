@@ -9,5 +9,4 @@ public class HahootApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HahootApplication.class, args);
 	}
-
 }

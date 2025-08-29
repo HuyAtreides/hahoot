@@ -1,9 +1,8 @@
 package com.huyphan.hahoot.quiz.present.model;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import com.huyphan.hahoot.quiz.gameplay.core.model.Answer;
 
-import com.huyphan.hahoot.quiz.gameplay.model.Answer;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -12,7 +11,7 @@ public class TextBasedAnswer implements Answer, AnswerScreen<String> {
     private final Media media;
 
     @Override
-    public boolean matches(@NonNull Answer obj) {
+    public boolean matches(@NotNull Answer obj) {
         if (obj instanceof TextBasedAnswer other) {
             return this.text.equals(other.text);
         }

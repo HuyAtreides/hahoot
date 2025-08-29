@@ -3,9 +3,9 @@ package com.huyphan.hahoot.quiz.present.model;
 import java.util.List;
 import java.util.Optional;
 
-import com.huyphan.hahoot.quiz.gameplay.model.Answer;
-import com.huyphan.hahoot.quiz.gameplay.model.QuestionType;
-import com.huyphan.hahoot.quiz.gameplay.model.Quiz;
+import com.huyphan.hahoot.quiz.gameplay.core.model.Answer;
+import com.huyphan.hahoot.quiz.gameplay.core.model.QuestionType;
+import com.huyphan.hahoot.quiz.gameplay.core.model.Quiz;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;

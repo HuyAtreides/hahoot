@@ -1,4 +1,4 @@
-package com.huyphan.hahoot.quiz.gameplay.service;
+package com.huyphan.hahoot.quiz.gameplay.core.service;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,19 +8,25 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
-import com.huyphan.hahoot.quiz.gameplay.model.HahootGame;
+import com.huyphan.hahoot.quiz.gameplay.core.model.HahootGame;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class QuizTimerManager {
     private final ScheduledExecutorService scheduledExecutorService;
-    static private final ConcurrentHashMap<UUID, ScheduledFuture<?>> gameQuizTimers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, ScheduledFuture<?>> gameQuizTimers = new ConcurrentHashMap<>();
 
     public void startGameTimer(HahootGame game) {
         Runnable timerTask = () -> {
             game.minus1SecondForCurrentQuiz();
+
+            if (game.isCurrentQuizTimeUp()) {
+                this.stopGameTimer(game.getId());
+            }
+
             System.out.println(
                     "Timer tick for game: " + game.getId() + ", quiz: " + game.getCurrentQuiz());
         };
@@ -30,9 +36,7 @@ public class QuizTimerManager {
         // Logic to start the timer
     }
 
-    public void stopGameTimer(String gameId, String quizId) {
-        gameQuizTimers.get(quizId).cancel(true);
-
+    public void stopGameTimer(UUID gameId) {
+        gameQuizTimers.get(gameId).cancel(true);
     }
-
 }

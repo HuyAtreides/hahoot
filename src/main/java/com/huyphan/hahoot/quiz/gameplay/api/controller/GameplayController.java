@@ -1,4 +1,4 @@
-package com.huyphan.hahoot.quiz.gameplay.controller;
+package com.huyphan.hahoot.quiz.gameplay.api.controller;
 
 import org.springframework.stereotype.Controller;
 
