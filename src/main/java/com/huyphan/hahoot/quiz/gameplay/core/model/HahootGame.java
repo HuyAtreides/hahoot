@@ -1,16 +1,12 @@
 package com.huyphan.hahoot.quiz.gameplay.core.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.*;
 
 @AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 @Builder
@@ -19,39 +15,56 @@ public class HahootGame {
     @NotNull
     private final UUID id;
 
-    @NotEmpty
     private final List<Participant> participants;
 
     @NotEmpty
-    private final List<Quiz> quizzes;
-    private final GameStatus status;
+    private final List<@NotNull Quiz> quizzes;
+
+    @NotNull
+    @Getter
+    private volatile GameStatus status;
     private final List<ParticipantQuizAnswer> currentQuizAnswers;
 
     @Builder
     private static record ParticipantQuizAnswer(Quiz quiz, Answer answer) {
     }
 
-    private final int currentQuizNumber = 0;
+    private int currentQuizNumber = 0;
 
-    public static HahootGame start(
-            List<Participant> participants,
-            List<Quiz> quizzes) {
-
+    public static HahootGame create(
+            List<Quiz> quizzes
+    ) {
         return HahootGame.builder()
                 .id(UUID.randomUUID())
-                .participants(participants)
-                .quizzes(new CopyOnWriteArrayList<Quiz>(quizzes))
+                .participants(new ArrayList<>())
+                .quizzes(new ArrayList<>(Objects.requireNonNull(quizzes)))
                 .status(GameStatus.CREATED)
                 .currentQuizAnswers(Collections.emptyList())
                 .build();
+    }
+
+    public void moveToNextQuiz() {
+        if (getCurrentQuiz().getStatus() == QuizStatus.WAITING) {
+            throw new IllegalArgumentException("Can not move to next quiz cause current quiz is not answered yet");
+        }
+        currentQuizNumber++;
     }
 
     public Quiz getCurrentQuiz() {
         return quizzes.get(currentQuizNumber);
     }
 
+    public void start() {
+        if (status == GameStatus.CREATED) {
+            this.status = GameStatus.IN_PROGRESS;
+            return;
+        }
+
+        throw new IllegalArgumentException("The game status is not valid for starting");
+    }
+
     public void addParticipantAnswer(Participant participant, Answer answer) {
-        if (status.isStarted()) {
+        if (status == GameStatus.IN_PROGRESS) {
             currentQuizAnswers.add(ParticipantQuizAnswer.builder()
                     .quiz(getCurrentQuiz())
                     .answer(answer)
@@ -69,7 +82,7 @@ public class HahootGame {
         Quiz currentQuiz = getCurrentQuiz();
 
         if (currentQuiz.isTimeUp()) {
-            throw new IllegalStateException("Current quiz time has already elapsed");
+            throw new IllegalStateException("Current quiz time is over");
         }
 
         Quiz quizAfterTimeElapsed = currentQuiz.oneSecondElapsed();
@@ -77,10 +90,15 @@ public class HahootGame {
     }
 
     public void addParticipant(Participant participant) {
-        if (status == GameStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Cannot add participants while the game is in progress");
+        if (status != GameStatus.CREATED) {
+            throw new IllegalStateException("Cannot add participants when the game has started");
         }
 
-        participants.add(participant);
+        if (participant.getStatus() == ParticipantStatus.I_AM_PLAYING) {
+            throw new IllegalStateException("Can not add a participant that is playing another game");
+        }
+
+        participant.setStatusToPlaying();
+        participants.add(Objects.requireNonNull(participant));
     }
 }

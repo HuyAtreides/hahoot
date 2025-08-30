@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum CommonConstraint implements ModelConstraint {
-    NON_NULL("NotNull"),
+    NOT_NULL("NotNull"),
     NOT_EMPTY("NotEmpty");
 
     private final String annotationName;

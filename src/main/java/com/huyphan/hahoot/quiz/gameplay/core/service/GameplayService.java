@@ -1,36 +1,44 @@
 package com.huyphan.hahoot.quiz.gameplay.core.service;
 
-import java.util.List;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import com.huyphan.hahoot.quiz.gameplay.core.model.HahootGame;
 import com.huyphan.hahoot.quiz.gameplay.infrastructure.repository.GameplayInMemoryStorage;
-
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 @Service
-@Scope
 @AllArgsConstructor
+@Slf4j
 public class GameplayService {
     private final QuizTimerManager quizTimerManager;
     private final GameplayInMemoryStorage gameplayInMemoryStorage;
+    private final ExecutorService gameplayExecutor;
 
-    public void startGame() {
-        var game = HahootGame.start(List.of(), List.of());
+    public void createGame(CreateGameCommand createGameCommand) {
+        var game = HahootGame.create(createGameCommand.getQuizzes());
         gameplayInMemoryStorage.saveGame(game);
     }
 
-    public void addParticipant(HahootGame game, String participantName) {
-        // Logic to add a participant to the game
-        System.out.println("Adding participant: " + participantName + " to game: " + game.getId());
+    public void addParticipant(AddParticipantCommand addParticipantCommand) {
+        executeCommand(() -> {
+            var gameId = addParticipantCommand.getGameId();
+            var game = getGameFromId(gameId);
+            game.addParticipant(addParticipantCommand.getParticipant());
+        });
     }
 
-    public void nextQuiz() {
+    public void startGame(HahootGame game) {
+        executeCommand(game::start);
+    }
 
-        // Logic to proceed to the next quiz
-        System.out.println("Proceeding to the next quiz");
+    public void nextQuiz(UUID gameId) {
+        getGameFromId(gameId).moveToNextQuiz();
+        quizTimerManager.startGameTimer(gameId);
     }
 
     public void showAnswer() {
@@ -43,4 +51,20 @@ public class GameplayService {
         System.out.println("Game ended");
     }
 
+    private void executeCommand(Runnable runnable) {
+        try {
+            Future<?> future = gameplayExecutor.submit(runnable);
+
+            future.get();
+        }
+        catch (ExecutionException executionException) {
+            throw (RuntimeException) executionException.getCause();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private HahootGame getGameFromId(UUID gameId) {
+        return gameplayInMemoryStorage.getGame(gameId).orElseThrow();
+    }
 }

@@ -1,5 +1,11 @@
 package com.huyphan.hahoot.quiz.gameplay.core.model;
 
-public interface Participant {
+import java.util.UUID;
 
+public interface Participant {
+    UUID getId();
+
+    ParticipantStatus getStatus();
+
+    void setStatusToPlaying();
 }
