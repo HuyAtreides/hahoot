@@ -29,4 +29,8 @@ public class GameplayInMemoryStorage {
     public Optional<HahootGame> getGame(@NotNull  UUID gameId) {
         return Optional.ofNullable(gameStorage.get(gameId));
     }
+
+    public void flush(UUID gameId) {
+
+    }
 }

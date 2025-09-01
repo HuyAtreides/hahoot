@@ -17,6 +17,7 @@ public class QuizTimerManager {
     private final ScheduledExecutorService scheduledExecutorService;
     private final Executor gameplayExecutor;
     private final GameplayInMemoryStorage storage;
+    private final GameplayService gameplayService;
     private final ConcurrentHashMap<UUID, ScheduledFuture<?>> gameQuizTimers = new ConcurrentHashMap<>();
 
     public void startGameTimer(UUID gameId) {
@@ -26,7 +27,7 @@ public class QuizTimerManager {
                 game.minus1SecondForCurrentQuiz();
 
                 if (game.isCurrentQuizTimeUp()) {
-                    this.stopGameTimer(game.getId());
+                    gameplayService.finishCurrentQuiz(gameId);
                 }
             });
         };

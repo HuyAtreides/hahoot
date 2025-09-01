@@ -2,34 +2,30 @@ package com.huyphan.hahoot.quiz.gameplay.core.model;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+public interface Quiz {
+    boolean canInteract();
 
-@AllArgsConstructor
-@SuperBuilder
-public abstract class Quiz {
-    final protected String questionTitle;
-    final protected List<Answer> answers;
-    final protected List<Answer> correctAnswers;
-    final protected int timeLimit;
-    final protected int points;
-    final protected int timeLeft;
-    @Getter
-    final protected QuizStatus status;
+    boolean isFinished();
 
-    public abstract boolean isCorrectAnswer(Answer answer);
+    List<Answer> getCorrectAnswers();
 
-    public abstract int getPoints(Answer answer);
+    int calculatePoint(List<Answer> answers);
 
-    public abstract int getTimeLimit();
+    boolean isCorrectAnswer(Answer answer);
 
-    public abstract QuestionType getQuestionType();
+    QuizStatus getStatus();
 
-    public abstract Quiz oneSecondElapsed();
+    int getPoints();
 
-    public boolean isTimeUp() {
-        return timeLeft == 0;
-    }
+    int getTimeLeft();
 
+    QuestionType getQuestionType();
+
+    void minusOneSecond();
+
+    boolean isTimeUp();
+
+    void markFinished();
+
+    void validateIfCanBeInteracted();
 }

@@ -30,6 +30,28 @@ public class GameplayService {
             var game = getGameFromId(gameId);
             game.addParticipant(addParticipantCommand.getParticipant());
         });
+
+        // Set Participant status to playing game
+    }
+
+    public void finishCurrentQuiz(UUID gameId) {
+        executeCommand(() -> {
+            var game = getGameFromId(gameId);
+            game.finishCurrentQuiz();
+            quizTimerManager.stopGameTimer(gameId);
+        });
+    }
+
+    public void ranking() {
+
+    }
+
+    public void endGame(UUID gameId) {
+        executeCommand(() -> {
+            var game = getGameFromId(gameId);
+            game.end();
+            gameplayInMemoryStorage.flush(gameId);
+        });
     }
 
     public void startGame(HahootGame game) {
@@ -37,18 +59,10 @@ public class GameplayService {
     }
 
     public void nextQuiz(UUID gameId) {
-        getGameFromId(gameId).moveToNextQuiz();
-        quizTimerManager.startGameTimer(gameId);
-    }
-
-    public void showAnswer() {
-        // Logic to show the answer
-        System.out.println("Showing the answer");
-    }
-
-    public void endGame() {
-        // Logic to end the game
-        System.out.println("Game ended");
+        executeCommand(() -> {
+            getGameFromId(gameId).moveToNextQuiz();
+            quizTimerManager.startGameTimer(gameId);
+        });
     }
 
     private void executeCommand(Runnable runnable) {

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 public class CreateGameTest {
 
@@ -37,7 +38,7 @@ public class CreateGameTest {
 
     @Test
     void create_game_correctly_should_success_with_correct_state() {
-        var dummyQuiz = DummyQuiz.builder().build();
+        var dummyQuiz = mock(Quiz.class);
         var game = HahootGame.create(List.of(dummyQuiz));
         ModelValidator.assertNotViolate(game);
         assertNotNull(game.getId());

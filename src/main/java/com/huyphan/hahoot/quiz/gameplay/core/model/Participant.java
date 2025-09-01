@@ -7,5 +7,5 @@ public interface Participant {
 
     ParticipantStatus getStatus();
 
-    void setStatusToPlaying();
+    boolean equals();
 }
