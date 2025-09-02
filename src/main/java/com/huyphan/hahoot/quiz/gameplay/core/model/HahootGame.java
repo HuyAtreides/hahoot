@@ -24,11 +24,9 @@ public class HahootGame {
     @NotNull
     @Getter
     private volatile GameStatus status;
-    private final List<ParticipantQuizAnswer> currentQuizAnswers;
+    private Map<Participant, Answer<?>> currentQuizAnswers;
 
-    @Builder
-    private static record ParticipantQuizAnswer(Quiz quiz, Answer answer) {
-    }
+    private final Participant creator;
 
     @Builder.Default
     private int currentQuizNumber = 0;
@@ -41,20 +39,24 @@ public class HahootGame {
                 .participants(new ArrayList<>())
                 .quizzes(new ArrayList<>(Objects.requireNonNull(quizzes)))
                 .status(GameStatus.CREATED)
-                .currentQuizAnswers(Collections.emptyList())
+                .currentQuizAnswers(new HashMap<>())
                 .build();
     }
 
     public void moveToNextQuiz() {
-        if (!getCurrentQuiz().isFinished()) {
-            throw new IllegalStateException("This current quiz is not finished yet, why the heck do you want to move to next quiz?");
-        }
+        boolean isFirstQuiz = currentQuizNumber == 0;
 
-        if (getCurrentQuiz().getStatus() == QuizStatus.NOT_YET_SHOWN_YOU_CAN_JUST_WAIT) {
+        if (isFirstQuiz) {
+            getCurrentQuiz().show();
             return;
         }
 
+        if (!getCurrentQuiz().isFinished()) {
+            throw new IllegalStateException("The current quiz is not finished yet, why the heck do you want to move to next quiz?");
+        }
+
         currentQuizNumber++;
+        getCurrentQuiz().show();
     }
 
     public Quiz getCurrentQuiz() {
@@ -77,11 +79,7 @@ public class HahootGame {
     public void addParticipantAnswer(Participant participant, Answer answer) {
         validateIfGameInValidStateToInteract();
 
-        currentQuizAnswers.add(ParticipantQuizAnswer.builder()
-                .quiz(getCurrentQuiz())
-                .answer(answer)
-                .build());
-
+        currentQuizAnswers.put(participant, answer);
     }
 
     public boolean isCurrentQuizTimeUp() {
@@ -100,10 +98,12 @@ public class HahootGame {
 
         Quiz currentQuiz = getCurrentQuiz();
 
+        this.currentQuizAnswers.clear();
+
         currentQuiz.markFinished();
     }
 
-    public List<Answer> showCurrentQuizAnswer() {
+    public List<Answer<?>> showCurrentQuizAnswer() {
         validateIfGameInValidStateToInteract();
 
         var quiz = getCurrentQuiz();
@@ -111,8 +111,6 @@ public class HahootGame {
         if (!quiz.isFinished()) {
             throw new IllegalStateException("The quiz is not finished yet buddy, don't cheat!");
         }
-
-        validateIfGameInValidStateToInteract();
 
         return quiz.getCorrectAnswers();
     }

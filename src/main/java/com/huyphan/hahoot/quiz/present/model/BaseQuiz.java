@@ -15,9 +15,9 @@ import java.util.List;
 @SuperBuilder
 public abstract class BaseQuiz implements Quiz {
     final protected String questionTitle;
-    final protected List<Answer> answers;
+    final protected List<Answer<?>> answers;
     @Getter
-    final protected List<Answer> correctAnswers;
+    final protected List<Answer<?>> correctAnswers;
 
     @Positive
     final protected int timeLimit;
@@ -28,20 +28,23 @@ public abstract class BaseQuiz implements Quiz {
 
     @Getter
     @Positive
-    protected int timeLeft;
+    protected   int timeLeft;
 
     @Builder.Default
     @Getter
     protected QuizStatus status = QuizStatus.NOT_YET_SHOWN_YOU_CAN_JUST_WAIT;
 
+    @Override
     final public boolean canInteract() {
         return status == QuizStatus.COME_ON_I_AM_WAITING_FOR_ANSWERS;
     }
 
+    @Override
     final public boolean isFinished() {
         return status == QuizStatus.ALREADY_FINISHED_NOTHING_YOU_CAN_DO;
     }
 
+    @Override
     final public boolean isTimeUp() {
         return timeLeft == 0;
     }
@@ -52,9 +55,18 @@ public abstract class BaseQuiz implements Quiz {
         }
     }
 
+    @Override
+    final public void show() {
+        if (status != QuizStatus.NOT_YET_SHOWN_YOU_CAN_JUST_WAIT) {
+            throw new IllegalStateException("Buddy, this quiz is not in valid state to show");
+        }
+
+        this.status = QuizStatus.COME_ON_I_AM_WAITING_FOR_ANSWERS;
+    }
+
     final public void validateIfPropertiesCanBeUpdated() {
-        if (status == QuizStatus.JUST_CREATED_NOT_READY_TO_DO_ANYTHING) {
-            throw new IllegalStateException("Quiz time is over, can not minus the time anymore buddy");
+        if (status != QuizStatus.JUST_CREATED_NOT_READY_TO_DO_ANYTHING) {
+            throw new IllegalStateException("Bro, you can only update this properties during creating stage of the quiz");
         }
     }
 }

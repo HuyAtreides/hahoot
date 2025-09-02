@@ -1,25 +1,26 @@
 package com.huyphan.hahoot.quiz.present.model;
 
 import com.huyphan.hahoot.quiz.gameplay.core.model.Answer;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TextBasedAnswer implements Answer, AnswerScreen<String> {
+public class TextBasedAnswer implements Answer<String>, AnswerScreen<String> {
+
     private final String text;
     private final Media media;
 
     @Override
-    public boolean matches(@NotNull Answer obj) {
+    public boolean matches(@NotNull Answer<String> obj) {
         if (obj instanceof TextBasedAnswer other) {
-            return this.text.equals(other.text);
+            return getValue().equals(obj.getValue());
         }
 
         throw new IllegalArgumentException("Cannot compare TextBasedAnswer with " + obj.getClass().getSimpleName());
     }
 
-    public String getText() {
+    @Override
+    public String getValue() {
         return text;
     }
 
@@ -37,12 +38,6 @@ public class TextBasedAnswer implements Answer, AnswerScreen<String> {
 
     @Override
     public Media getMedia() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getType() {
         // TODO Auto-generated method stub
         return null;
     }

@@ -1,9 +1,9 @@
 package com.huyphan.hahoot.quiz.gameplay.core.model;
 
-import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
 
-public interface Answer {
-    boolean matches(@Nonnull Answer obj);
+public interface Answer<T> {
+    boolean matches(@NotNull Answer<T> otherAnswer);
 
-    String getType();
+    T getValue();
 }

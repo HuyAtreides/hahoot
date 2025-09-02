@@ -1,15 +1,12 @@
 package com.huyphan.hahoot.quiz.gameplay.core.service;
 
-import java.util.UUID;
-import java.util.concurrent.*;
-
 import com.huyphan.hahoot.quiz.gameplay.infrastructure.repository.GameplayInMemoryStorage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.huyphan.hahoot.quiz.gameplay.core.model.HahootGame;
-
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +15,9 @@ public class QuizTimerManager {
     private final Executor gameplayExecutor;
     private final GameplayInMemoryStorage storage;
     private final GameplayService gameplayService;
-    private final ConcurrentHashMap<UUID, ScheduledFuture<?>> gameQuizTimers = new ConcurrentHashMap<>();
+    static private final long INITIAL_DELAY_BEFORE_TIMER_START_IN_MILLI_SECONDS = 500;
+    static private final long TIMER_PERIOD_IN_MILLI_SECONDS = 1000;
+    private final Map<UUID, ScheduledFuture<?>> gameQuizTimers = new ConcurrentHashMap<>();
 
     public void startGameTimer(UUID gameId) {
         Runnable timerTask = () -> {
@@ -33,7 +32,7 @@ public class QuizTimerManager {
         };
 
         gameQuizTimers.putIfAbsent(gameId,
-                scheduledExecutorService.scheduleAtFixedRate(timerTask, 0, 1, TimeUnit.SECONDS));
+                scheduledExecutorService.scheduleAtFixedRate(timerTask, INITIAL_DELAY_BEFORE_TIMER_START_IN_MILLI_SECONDS, TIMER_PERIOD_IN_MILLI_SECONDS, TimeUnit.MILLISECONDS));
         // Logic to create the timer
     }
 

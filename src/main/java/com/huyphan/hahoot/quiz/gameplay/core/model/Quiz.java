@@ -7,11 +7,11 @@ public interface Quiz {
 
     boolean isFinished();
 
-    List<Answer> getCorrectAnswers();
+    List<Answer<?>> getCorrectAnswers();
 
-    int calculatePoint(List<Answer> answers);
+    int calculatePoint(List<Answer<?>> answers);
 
-    boolean isCorrectAnswer(Answer answer);
+    boolean isCorrectAnswer(Answer<?> answer);
 
     QuizStatus getStatus();
 
@@ -19,9 +19,9 @@ public interface Quiz {
 
     int getTimeLeft();
 
-    QuestionType getQuestionType();
-
     void minusOneSecond();
+
+    void show();
 
     boolean isTimeUp();
 

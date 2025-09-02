@@ -1,13 +1,11 @@
 package com.huyphan.hahoot.quiz.present.model;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.huyphan.hahoot.quiz.gameplay.core.model.Answer;
-import com.huyphan.hahoot.quiz.gameplay.core.model.QuestionType;
-
 import com.huyphan.hahoot.quiz.gameplay.core.model.QuizStatus;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
+import java.util.Optional;
 
 @SuperBuilder
 public class OptionSelectQuiz extends BaseQuiz implements QuizScreen {
@@ -27,7 +25,7 @@ public class OptionSelectQuiz extends BaseQuiz implements QuizScreen {
 
     @Override
     public boolean isCorrectAnswer(Answer answer) {
-        return correctAnswers.stream().anyMatch(correctAnswer -> correctAnswer.equals(answer));
+        return correctAnswers.stream().anyMatch(correctAnswer -> correctAnswer.matches(answer));
     }
 
     @Override
@@ -52,14 +50,14 @@ public class OptionSelectQuiz extends BaseQuiz implements QuizScreen {
     }
 
     @Override
-    public void updateQuestionType(QuestionType questionType) {
+    public void updateQuizType(QuizType quizType) {
         validateIfPropertiesCanBeUpdated();
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public int calculatePoint(List<Answer> answers) {
+    public int calculatePoint(List<Answer<?>> answers) {
         return answers.stream().allMatch(this::isCorrectAnswer) ? points : 0;
     }
 
@@ -79,10 +77,5 @@ public class OptionSelectQuiz extends BaseQuiz implements QuizScreen {
     @Override
     public Media getMedia() {
         return media.orElseThrow();
-    }
-
-    @Override
-    public QuestionType getQuestionType() {
-        return QuestionType.QUIZ;
     }
 }

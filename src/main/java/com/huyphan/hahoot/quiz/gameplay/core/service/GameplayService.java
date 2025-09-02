@@ -20,18 +20,20 @@ public class GameplayService {
     private final ExecutorService gameplayExecutor;
 
     public void createGame(CreateGameCommand createGameCommand) {
+        // Set Participant status to in game
+
         var game = HahootGame.create(createGameCommand.getQuizzes());
         gameplayInMemoryStorage.saveGame(game);
     }
 
     public void addParticipant(AddParticipantCommand addParticipantCommand) {
+        // Set Participant status to playing game
+
         executeCommand(() -> {
             var gameId = addParticipantCommand.getGameId();
             var game = getGameFromId(gameId);
             game.addParticipant(addParticipantCommand.getParticipant());
         });
-
-        // Set Participant status to playing game
     }
 
     public void finishCurrentQuiz(UUID gameId) {
@@ -50,7 +52,9 @@ public class GameplayService {
         executeCommand(() -> {
             var game = getGameFromId(gameId);
             game.end();
+            gameplayInMemoryStorage.saveGame(game);
             gameplayInMemoryStorage.flush(gameId);
+            quizTimerManager.removeGameTimer(gameId);
         });
     }
 

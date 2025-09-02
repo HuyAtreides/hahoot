@@ -22,15 +22,26 @@ public class GameplayInMemoryStorage {
 
     @Validated
     public void saveGame(@Valid HahootGame game) {
+        var alreadyExistedGame = gameStorage.putIfAbsent(game.getId(), game);
 
+        if (alreadyExistedGame != null) {
+            throw new IllegalStateException("Game is already existed");
+        }
     }
 
     @Validated
-    public Optional<HahootGame> getGame(@NotNull  UUID gameId) {
+    public Optional<HahootGame> getGame(@NotNull UUID gameId) {
         return Optional.ofNullable(gameStorage.get(gameId));
     }
 
-    public void flush(UUID gameId) {
+    public void flush(@NotNull  UUID gameId) {
+        if (!gameStorage.containsKey(gameId)) {
+            throw new IllegalStateException("The game isn't found so you can't flush it buddy");
+        }
+        //TODO: flush game with gameId to persistence storage
+    }
 
+    public void remove(@NotNull  UUID gameId) {
+        gameStorage.remove(gameId);
     }
 }

@@ -1,8 +1,8 @@
 package com.huyphan.hahoot.quiz.present.model;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
+
+import java.util.List;
 
 @AllArgsConstructor
 public class HahootPresentation {
@@ -10,5 +10,4 @@ public class HahootPresentation {
     private final Theme theme;
     private final Status status;
     private final Creator creator;
-
 }

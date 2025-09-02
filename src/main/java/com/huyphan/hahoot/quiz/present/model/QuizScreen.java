@@ -1,7 +1,6 @@
 package com.huyphan.hahoot.quiz.present.model;
 
 import com.huyphan.hahoot.quiz.gameplay.core.model.Answer;
-import com.huyphan.hahoot.quiz.gameplay.core.model.QuestionType;
 
 public interface QuizScreen extends Screen {
     void updateTimeLimit(int timeLimit);
@@ -14,5 +13,5 @@ public interface QuizScreen extends Screen {
 
     void setQuestionTitle(String questionTitle);
 
-    void updateQuestionType(QuestionType questionType);
+    void updateQuizType(QuizType quizType);
 }
