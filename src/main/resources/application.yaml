@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: hahoot
-
-  task:
-    scheduling:
-      pool:
-        size: 40
