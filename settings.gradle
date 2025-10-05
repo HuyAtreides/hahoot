@@ -1,4 +1,0 @@
-rootProject.name = 'hahoot'
-
-include 'presentation'
-include 'gameplay'

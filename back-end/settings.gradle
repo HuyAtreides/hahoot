@@ -1,0 +1,6 @@
+rootProject.name = 'hahoot'
+
+include 'presentation'
+include 'gameplay'
+include 'main'
+include 'lobby'
