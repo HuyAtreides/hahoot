@@ -1,4 +1,4 @@
-rootProject.name = 'hahoot'
+rootProject.name = 'hahoot-back-end'
 
 include 'presentation'
 include 'gameplay'
